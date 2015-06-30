@@ -10,20 +10,67 @@ inject :: String -> [String] -> JSNode -> JSNode
 inject fname contents = profiler . apply (f fname contents)
 
 f :: String -> [String] -> Node -> Node
+-- function test() { body; } -> function test() { start("test"); body; end(); }
 f fname contents (JSFunction fn name lb args rb (NN (JSBlock a b c)))
-  = JSFunction fn name lb args rb $ NN (JSBlock a (start fname contents (getPos a) (extractName [name]) : b ++ [ jssemicolon, end ]) c)
+  = JSFunction fn name lb args rb
+      $ NN (JSBlock a (start fname contents (getPos a) (extractName [name]) : b ++ [ jssemicolon, end ]) c)
+-- function() { body; }; -> function() { start("anonymous"); body; end(); };
 f fname contents (JSFunctionExpression fn name lb args rb (NN (JSBlock a b c)))
-  = JSFunctionExpression fn name lb args rb $ NN (JSBlock a (start fname contents (getPos a) (extractName name) : b ++ [ jssemicolon, end ]) c)
-f fname contents (JSVarDecl variable [ equal@(NT (JSLiteral "=") _ _), NN (JSFunction fn name lb args rb (NN (JSBlock a (NN (JSVariables _ (NN (JSVarDecl name' _):_) _):b) c))) ])
+  = JSFunctionExpression fn name lb args rb
+      $ NN (JSBlock a (start fname contents (getPos a) (extractName name) : b ++ [ jssemicolon, end ]) c)
+-- no case
+f fname contents
+  (JSVarDecl
+     variable
+     [ equal@(NT (JSLiteral "=") _ _),
+       NN (JSFunction fn name lb args rb (NN (JSBlock a (NN (JSVariables _ (NN (JSVarDecl name' _):_) _):b) c))) ])
   | extractName [name'] == identifier "state"
-    = JSVarDecl variable [ equal, NN (JSFunction fn name lb args rb $ NN (JSBlock a (start fname contents (getPos a) (extractName [variable]) : b ++ [ jssemicolon ]) c)) ]
-f fname contents (JSVarDecl variable [ equal@(NT (JSLiteral "=") _ _), NN (JSFunction fn name lb args rb (NN (JSBlock a b c))) ])
-  = JSVarDecl variable [ equal, NN (JSFunction fn name lb args rb $ NN (JSBlock a (start fname contents (getPos a) (extractName [variable]) : b ++ [ jssemicolon, end ]) c)) ]
-f fname contents (JSVarDecl variable [ equal@(NT (JSLiteral "=") _ _), NN (JSFunctionExpression fn name lb args rb (NN (JSBlock a (NN (JSVariables _ (NN (JSVarDecl name' _):_) _):b) c))) ])
+    = JSVarDecl
+        variable
+        [ equal,
+          NN (JSFunction fn name lb args rb
+             $ NN (JSBlock a (start fname contents (getPos a) (extractName [variable])
+                             : b ++ [ jssemicolon ]) c)) ]
+-- no case
+f fname contents
+  (JSVarDecl
+     variable
+     [ equal@(NT (JSLiteral "=") _ _),
+       NN (JSFunction fn name lb args rb (NN (JSBlock a b c))) ])
+  = JSVarDecl
+      variable
+      [ equal,
+        NN (JSFunction fn name lb args rb
+           $ NN (JSBlock a (start fname contents (getPos a) (extractName [variable])
+                           : b ++ [ jssemicolon, end ]) c)) ]
+-- var test = function() { start("anonymous"); body; end(); }; -> function() { start("test"); body; end(); };
+f fname contents
+  (JSVarDecl
+     variable
+     [ equal@(NT (JSLiteral "=") _ _),
+       NN (JSFunctionExpression fn name lb args rb
+             (NN (JSBlock a (NN (JSVariables _ (NN (JSVarDecl name' _):_) _):b) c))) ])
   | extractName [name'] == identifier "state"
-    = JSVarDecl variable [ equal, NN (JSFunctionExpression fn name lb args rb $ NN (JSBlock a (start fname contents (getPos a) (extractName [variable]) : b ++ [ jssemicolon ]) c)) ]
-f fname contents (JSVarDecl variable [ equal@(NT (JSLiteral "=") _ _), NN (JSFunctionExpression fn name lb args rb (NN (JSBlock a b c))) ])
-  = JSVarDecl variable [ equal, NN (JSFunctionExpression fn name lb args rb $ NN (JSBlock a (start fname contents (getPos a) (extractName [variable]) : b ++ [ jssemicolon, end ]) c)) ]
+    = JSVarDecl
+        variable
+        [ equal,
+          NN (JSFunctionExpression fn name lb args rb
+               $ NN (JSBlock a (start fname contents (getPos a) (extractName [variable])
+                               : b ++ [ jssemicolon ]) c)) ]
+-- var test = function() { body; }; -> function() { start("test"); body; end(); };
+f fname contents
+  (JSVarDecl
+    variable
+    [ equal@(NT (JSLiteral "=") _ _),
+      NN (JSFunctionExpression fn name lb args rb
+            (NN (JSBlock a b c))) ])
+  = JSVarDecl
+      variable
+      [ equal,
+        NN (JSFunctionExpression fn name lb args rb
+           $ NN (JSBlock a (start fname contents (getPos a) (extractName [variable])
+                           : b ++ [ jssemicolon, end ]) c)) ]
+-- return expr; -> return (function() { start(); var value = expr; end(); return value; }).call(this);
 f _ _ (JSReturn ret expr _)
   = JSReturn ret
       [ jscallNoSemicolon
