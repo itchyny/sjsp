@@ -10,7 +10,7 @@ lists many many functions of the frameworks.
 
 Let's get back to what we really need.
 
-#### We want profile the code we write.
+#### We want to profile the code we write.
 
 In a really simple way.
 ```js
