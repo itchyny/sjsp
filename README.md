@@ -41,6 +41,8 @@ So, here comes `sjsp`, a tool for injecting profiling codes into JavaScript file
  $ sjsp test.js # this command generates test.sjsp.js
  # (sjsp is safe, does not break your test.js)
  # import the generated test.sjsp.js instead of test.js
+ # open the page with your favorite browser and look into the JavaScript console
+ # it reports the profiling information each 10 seconds
 ```
 
 ## How it works
