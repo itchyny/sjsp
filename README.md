@@ -109,7 +109,7 @@ function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","functio
   sjsp___end(sjsp___state); return someHeavyFunction();
 }
 ```
-The function will surely be called but the profiling result is not be correct.
+The function will surely be called but the profiling result is not correct.
 Now, let's see how `sjsp` handles `return` statements.
 ```js
 function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","function test() {  ");  
