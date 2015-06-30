@@ -81,11 +81,16 @@ The `sjsp` command generates `test.sjsp.js`.
 }
 ```
 It simply inserts `sjsp___start` and `sjsp___end` function calls at the top and
-the end of the functions.
+the end of the functions. The local variable `sjsp___state` holds the current
+time. It also saves the name, line number and column number of the function and
+the whole line. When the `sjsp___end` function is called, the profiling result
+is stored.
 
+It just inserts the two expressions for each functions.
+However the function can be aborted with `return` statements.
 
-But how does it handle `return` statements? Suppose the expression which is
-returned by the function is heavy.
+How does it handle `return` statements?
+Suppose the expression which is returned by the function is heavy.
 ```js
 function test() {  
   return someHeavyFunction();
