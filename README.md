@@ -15,11 +15,11 @@ Let's get back to what we really need.
 In a really simple way.
 ```js
 function test() {
-  start_profile(); // grab the time at the top
+  var start_time = +new Date(); // grab the current time at the top
 
   // our code
   
-  end_profile(); // grab the time again and log the time the function consumed.
+  log_profile("test", +new Date() - start_time); // grab the current time again and log the time the function consumed.
 }
 ```
 
@@ -65,7 +65,7 @@ time:   6.44sec    count:      42    test.js test6 (line: 31, col: 18)   functio
 time:   3.69sec    count:      31    test.js test3 (line: 13, col: 18)   function test3() {
 time:   3.04sec    count:      24    test.js test1 (line: 1, col: 18)   function test1() {
 ```
-The result is easy to read and focuses on the functions you have to improve the performance.
+The result is easy to read and shows the functions you have to improve the performance of.
 
 ## How it works
 Suppose `test.js` looks like the following.
