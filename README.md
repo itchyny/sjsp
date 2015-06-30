@@ -37,15 +37,14 @@ So, here comes `sjsp`, a tool for injecting profiling codes into JavaScript file
 ```
 
 ## Usage
+```
+ $ sjsp test.js            # generates test.sjsp.js
+```
 1. Use `sjsp` command on the JavaScript files you want to profile.
-```
- $ sjsp test.js            # this command generates test.sjsp.js
-```
-  The command `sjsp` does not break your test.js, but creates a new file.
-
+   The command `sjsp` does not break your test.js, but creates a new file.
 2. Use the generated test.sjsp.js instead of test.js
 3. Open the page with your favorite browser and look into the JavaScript console.
-   It reports the profiling information every 10 seconds.
+   The profiling result will be reported every 10 seconds.
 
 The profiling result will look like the following.
 ```
