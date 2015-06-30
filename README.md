@@ -60,8 +60,8 @@ It simply inserts `sjsp___start` and `sjsp___end` function calls at the top and
 the end of the functions.
 
 
-But how does it handle `return` statement? Suppose the returned expression is
-heavy?
+But how does it handle `return` statement? Suppose the expression which is
+returned by the function is heavy.
 ```js
 function test() {  
   return someHeavyFunction();
