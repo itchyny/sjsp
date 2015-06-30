@@ -13,10 +13,10 @@ executable sjsp
   main-is:              Main.hs
   other-modules:        Injector
                       , Helper
-  build-depends:        base
+  build-depends:        base >= 4.0
                       , ghc-prim
                       , language-javascript
-                      , bytestring
+                      , bytestring >= 0.10.6
                       , filepath
-                      , blaze-builder
+                      , blaze-builder >= 0.3.3
                       , unordered-containers
