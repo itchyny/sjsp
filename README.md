@@ -1,12 +1,11 @@
 # sjsp - Simple JavaScript Profiler
 ## Why?
-This is a JavaScript profiler, injecting a profiling codes into your JavaScript files.
+This is a JavaScript profiler, injecting profiling codes into your JavaScript files.
 
 Applications written in JavaScript are getting larger these days and more complicated.
-There are many JavaScript Frameworks and they sometimes make us difficult to profile
-our applications. The default profilers of the Web Browsers get useless as our
-applications become huge and the frameworks do tricky things. The profiler sometimes
-lists many many functions of the frameworks.
+There are many JavaScript Frameworks and they sometimes make us difficult to profile our applications.
+The default profilers of the Web Browsers get useless as our applications become huge and the frameworks do tricky things.
+The profiler sometimes lists many many functions of the frameworks.
 
 Let's get back to what we really need.
 
@@ -88,8 +87,8 @@ is stored.
 
 It just inserts the two statements for each functions.
 However, remember that functions can be aborted with `return` statements.
-
 How does it handle `return` statements?
+
 Suppose the expression which is returned by the function is heavy.
 ```js
 function test() {  
