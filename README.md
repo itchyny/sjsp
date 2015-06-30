@@ -86,8 +86,8 @@ time. It also saves the name, line number and column number of the function and
 the whole line. When the `sjsp___end` function is called, the profiling result
 is stored.
 
-It just inserts the two expressions for each functions.
-However the function can be aborted with `return` statements.
+It just inserts the two statements for each functions.
+However, remember that functions can be aborted with `return` statements.
 
 How does it handle `return` statements?
 Suppose the expression which is returned by the function is heavy.
