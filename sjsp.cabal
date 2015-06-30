@@ -1,0 +1,22 @@
+name:                   sjsp
+version:                0.0.0
+author:                 itchyny <https://github.com/itchyny>
+maintainer:             itchyny <https://github.com/itchyny>
+license:                MIT
+license-file:           LICENSE
+category:               Compiler
+build-type:             Simple
+cabal-version:          >=1.2
+
+executable sjsp
+  hs-source-dirs:       src
+  main-is:              Main.hs
+  other-modules:        Injector
+                      , Helper
+  build-depends:        base
+                      , ghc-prim
+                      , language-javascript
+                      , bytestring
+                      , filepath
+                      , blaze-builder
+                      , unordered-containers
