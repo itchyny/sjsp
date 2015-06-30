@@ -81,7 +81,7 @@ The `sjsp` command generates `test.sjsp.js`.
 }
 ```
 It simply inserts `sjsp___start` and `sjsp___end` function calls at the top and
-the end of the functions. The local variable `sjsp___state` holds the current
+the end of the functions. The local variable `sjsp___state` holds the starting
 time. It also saves the name, line number and column number of the function and
 the whole line. When the `sjsp___end` function is called, the profiling result
 is stored.
@@ -93,27 +93,27 @@ How does it handle `return` statements?
 Suppose the expression which is returned by the function is heavy.
 ```js
 function test() {  
-  return someHeavyFunction();
+  return someHeavyExpression;
 }
 ```
 Firstly consider the following code.
 ```js
 function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","function test() {  ");  
-  return someHeavyFunction(); sjsp___end(sjsp___state);
+  return someHeavyExpression; sjsp___end(sjsp___state);
 }
 ```
 Unfortunately, the `sjsp___end` function will never be called. Then what about
 placing the function before the `return` statement?
 ```js
 function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","function test() {  ");  
-  sjsp___end(sjsp___state); return someHeavyFunction();
+  sjsp___end(sjsp___state); return someHeavyExpression;
 }
 ```
 The function will surely be called but the profiling result is not correct.
 Now, let's see how `sjsp` handles `return` statements.
 ```js
 function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","function test() {  ");  
-  return (function(){ var sjsp___return = someHeavyFunction(); sjsp___end(sjsp___state); return sjsp___return; } ).call(this);; sjsp___end(sjsp___state);
+  return (function(){ var sjsp___return = someHeavyExpression; sjsp___end(sjsp___state); return sjsp___return; } ).call(this);; sjsp___end(sjsp___state);
 }
 ```
 It creates an anonymous function, captures the result and calls the function instantly.
