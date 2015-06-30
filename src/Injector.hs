@@ -1,10 +1,10 @@
 module Injector (inject) where
 
+import Data.Char (isSpace)
 import Data.List (intersperse)
 import Language.JavaScript.Parser
 
 import Helper
-import Data.Char (isSpace)
 
 inject :: String -> [String] -> JSNode -> JSNode
 inject fname contents = profiler . apply (f fname contents)
