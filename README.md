@@ -43,6 +43,53 @@ So, here comes `sjsp`, a tool for injecting profiling codes into JavaScript file
  # import the generated test.sjsp.js instead of test.js
 ```
 
+## How it works
+Suppose `test.js` looks like the following.
+```js
+function test() {
+  console.log('test');
+}
+```
+The `sjsp` command generates `test.sjsp.js`.
+```js
+/* some dirty codes of sjsp */ function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","function test() {");
+  console.log('test');; sjsp___end(sjsp___state);
+}
+```
+It simply inserts `sjsp___start` and `sjsp___end` function calls at the top and
+the end of the functions.
+
+
+But how does it handle `return` statement? Suppose the returned expression is
+heavy?
+```js
+function test() {  
+  return someHeavyFunction();
+}
+```
+Firstly consider the following code.
+```js
+function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","function test() {  ");  
+  return someHeavyFunction(); sjsp___end(sjsp___state);
+}
+```
+Unfortunately, the `sjsp___end` function will never called. Then what about
+placing the function before the `return` statement?
+```js
+function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","function test() {  ");  
+  sjsp___end(sjsp___state); return someHeavyFunction();
+}
+```
+The function will surely be called but the profiling result will not be correct.
+Now let's see how `sjsp` handles `return` statement.
+```js
+function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","function test() {  ");  
+  return (function(){ var sjsp___return = someHeavyFunction(); sjsp___end(sjsp___state); return sjsp___return; } ).call(this);; sjsp___end(sjsp___state);
+}
+```
+It creates an anonymous function, captures the result and calls the function instantly.
+The code looks a little bit tricky but it surely grabs the time consumed by the functions.
+
 ## Author
 itchyny (https://github.com/itchyny)
 
