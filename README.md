@@ -15,11 +15,11 @@ Let's get back to what we really need.
 In a really simple way.
 ```js
 function test() {
-  start_profile(); // grab the current date
+  start_profile(); // grab the current time
 
   // our code
   
-  end_profile(); // grab the date again and log the time the function cost
+  end_profile(); // grab the time again and log the time the function cost
 }
 ```
 
