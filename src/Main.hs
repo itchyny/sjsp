@@ -38,7 +38,7 @@ process opt name
 options :: [OptDescr Flag]
 options =
   [ Option "i"  ["interval"] (OptArg (Interval . fromMaybe "10") "INTERVAL")
-                                             "interval time in seconds (default 10)"
+                                             "interval time of logging the result in seconds (default 10)"
   , Option "p"  ["print"]    (NoArg Print)   "print out the compiled result to stdout"
   , Option "vV" ["version"]  (NoArg Version) "display the version number"
   , Option "h?" ["help"]     (NoArg Help)    "display this help"
