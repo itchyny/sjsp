@@ -5,9 +5,10 @@ import Data.List (intersperse)
 import Language.JavaScript.Parser
 
 import Helper
+import Config
 
-inject :: String -> [String] -> JSNode -> JSNode
-inject fname contents = profiler . apply (f fname contents)
+inject :: Config -> String -> [String] -> JSNode -> JSNode
+inject config fname contents = profiler config . apply (f fname contents)
 
 f :: String -> [String] -> Node -> Node
 -- function test() { body; } -> function test() { start("test"); body; end(); }
@@ -87,8 +88,8 @@ f _ _ x = x
 identifier :: String -> String
 identifier name = "sjsp___" ++ name
 
-profiler :: JSNode -> JSNode
-profiler node = NN $ JSExpression [ fromRight $ flip parse "" $
+profiler :: Config -> JSNode -> JSNode
+profiler config node = NN $ JSExpression [ fromRight $ flip parse "" $
   concat [ "window." ++ identifier "result" ++ " = window." ++ identifier "result" ++ " || {}; "
          , identifier "state" ++ " = { time: 0, line: 0, col: 0, name: '' };"
          , identifier "start" ++ " = function(fname, line, col, name, linestr) {"
@@ -101,29 +102,32 @@ profiler node = NN $ JSExpression [ fromRight $ flip parse "" $
          , "  " ++ identifier "result" ++ "[key].time += (+new Date() - x.time); "
          , "  " ++ identifier "result" ++ "[key].count += 1; "
          , "}; "
+         , identifier "print" ++ " = function(x, n) { return Array(Math.max(0, n - x.toString().length + 1)).join(' ') + x; }; "
          , identifier "result_time" ++ " = []; "
          , identifier "result_count" ++ " = []; "
          , identifier "format" ++ " = function(x) { return"
-         , " 'time: ' + Array(Math.max(0, 7 - (x.time / 100).toFixed(2).toString().length)).join(' ') + (x.time / 100).toFixed(2) + 'sec  "
-         , "  count: ' + Array(Math.max(0, 8 - x.count.toString().length)).join(' ') + x.count + '    '"
-         , "  + x.fname + ' ' + x.name + ' (line: ' + x.line + ', col: ' + x.col + ')   ' + x.linestr; }; "
+         , " 'time: ' + " ++ identifier "print" ++ "((x.time / 100).toFixed(2), 7) + 'sec  "
+         , " count: ' + " ++ identifier "print" ++ "(x.count, 7) + ' '"
+         , " + " ++ identifier "print" ++ "(x.fname, 15) + '  '"
+         , " + " ++ identifier "print" ++ "(x.name, 13) + '  '"
+         , " + ' (line:' + " ++ identifier "print" ++ "(x.line, 4) + ', col:' + " ++ identifier "print" ++ "(x.col, 3) + ')   ' + x.linestr; }; "
          , "if (window.hasOwnProperty('" ++ identifier "interval" ++ "')) { "
          , "  clearInterval(window." ++ identifier "interval" ++ ");"
          , "}"
          , "window." ++ identifier "interval" ++ " = setInterval(function() { "
          , "  console.log('========== SORT BY TIME =========='); "
          , "  " ++ identifier "result_time" ++ " = Object.keys(" ++ identifier "result" ++ ")"
-         , ".map(function (key) { return " ++ identifier "result" ++ "[key]; })"
-         , ".sort(function(x, y) {return y.time - x.time; })"
+         , ".map(function(key) { return " ++ identifier "result" ++ "[key]; })"
+         , ".sort(function(x, y) { return y.time - x.time; })"
          , ".slice(0, 20)"
          , ".map(function(x){ var y = " ++ identifier "format" ++ "(x); console.log(y); return y}); "
          , "  console.log('========== SORT BY COUNT =========='); "
          , "  " ++ identifier "result_count" ++ " = Object.keys(" ++ identifier "result" ++ ")"
-         , ".map(function (key) { return " ++ identifier "result" ++ "[key]; })"
-         , ".sort(function(x, y) {return y.count - x.count; })"
+         , ".map(function(key) { return " ++ identifier "result" ++ "[key]; })"
+         , ".sort(function(x, y) { return y.count - x.count; })"
          , ".slice(0, 20)"
          , ".map(function(x){ var y = " ++ identifier "format" ++ "(x); console.log(y); return y}); "
-         , "}, 10000);" ], node ]
+         , "}, " ++ show (interval config) ++ " * 1000);" ], node ]
 
 start :: String -> [String] -> TokenPosn -> String -> JSNode
 start fname contents (TokenPn _ line col) name
