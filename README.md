@@ -35,6 +35,11 @@ So, here comes `sjsp`, a tool for injecting profiling codes into JavaScript file
  $ sudo cabal install
 ```
 
+When you failed to install with the error `The program happy version >=x.xx is required but it could not be found.`, add the path to the environment variable.
+```
+export PATH=$PATH:$HOME/.cabal/bin
+```
+
 ## Usage
 ```
  $ sjsp test.js            # generates test.sjsp.js
