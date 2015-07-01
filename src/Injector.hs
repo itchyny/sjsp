@@ -86,7 +86,7 @@ f _ _ (JSReturn ret expr _)
 f _ _ x = x
 
 identifier :: String -> String
-identifier name = "sjsp___" ++ name
+identifier name = "sjsp__" ++ name
 
 profiler :: Config -> JSNode -> JSNode
 profiler config node = NN $ JSExpression [ fromRight $ flip parse "" $
