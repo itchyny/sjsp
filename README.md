@@ -14,11 +14,11 @@ Let's get back to what we really need.
 In a really simple way.
 ```js
 function test() {
-  var start_time = +new Date(); // grab the current time at the top
+  var start_time = Date.now(); // grab the current time at the top
 
   // our code
   
-  log_profile("test", +new Date() - start_time); // grab the current time again and log the time the function consumed.
+  log_profile("test", Date.now() - start_time); // grab the current time again and log the time the function consumed.
 }
 ```
 
