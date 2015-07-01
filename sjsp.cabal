@@ -21,3 +21,4 @@ executable sjsp
                       , filepath
                       , blaze-builder >= 0.3.3
                       , unordered-containers
+  build-tools:          happy >= 1.19, alex >= 3.1
