@@ -17,7 +17,7 @@ function test() {
   var start_time = Date.now(); // grab the current time at the top
 
   // our code
-  
+
   log_profile("test", Date.now() - start_time); // grab the current time again and log the time the function consumed.
 }
 ```
@@ -29,6 +29,11 @@ Of course not.
 So, here comes `sjsp`, a tool for injecting profiling codes into JavaScript files.
 
 ## Installation
+
+There are two ways to build sjsp; cabal-install and stack. If you have not Haskell environment yet, stack is a simpler way.
+
+### cabal-install
+
 ```
  $ git clone https://github.com/itchyny/sjsp
  $ cd sjsp
@@ -38,6 +43,20 @@ So, here comes `sjsp`, a tool for injecting profiling codes into JavaScript file
 When you failed to install with the error `The program happy version >=x.xx is required but it could not be found.`, add the path to the environment variable.
 ```
 export PATH=$PATH:$HOME/.cabal/bin
+```
+
+### stack
+
+Prepare `stack` command to download it from [here](https://github.com/commercialhaskell/stack/releases) and then run the following script:
+
+```
+ $ git clone https://github.com/itchyny/sjsp
+ $ cd sjsp
+ $ stack install
+```
+
+```
+export PATH=$PATH:$HOME/.local/bin
 ```
 
 ## Usage
