@@ -79,14 +79,14 @@ function test() {
 ```
 The `sjsp` command generates `test.sjsp.js`.
 ```js
-/* some dirty codes of sjsp */ function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","function test() {");
-  console.log('test');; sjsp___end(sjsp___state);
+/* some dirty codes of sjsp */ function test() { var sjsp__state = sjsp__start("test.js",1,17,"test","function test() {");
+  console.log('test');; sjsp__end(sjsp__state);
 }
 ```
-It simply inserts `sjsp___start` and `sjsp___end` function calls at the top and
-the end of the functions. The local variable `sjsp___state` holds the starting
+It simply inserts `sjsp__start` and `sjsp__end` function calls at the top and
+the end of the functions. The local variable `sjsp__state` holds the starting
 time. It also saves the name, line number and column number of the function and
-the whole line. When the `sjsp___end` function is called, the profiling result
+the whole line. When the `sjsp__end` function is called, the profiling result
 is stored.
 
 It just inserts the two statements for each functions.
@@ -101,22 +101,22 @@ function test() {
 ```
 Firstly consider the following code.
 ```js
-function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","function test() {  ");  
-  return someHeavyExpression; sjsp___end(sjsp___state);
+function test() { var sjsp__state = sjsp__start("test.js",1,17,"test","function test() {  ");  
+  return someHeavyExpression; sjsp__end(sjsp__state);
 }
 ```
-Unfortunately, the `sjsp___end` function will never be called. Then what about
+Unfortunately, the `sjsp__end` function will never be called. Then what about
 placing the function before the `return` statement?
 ```js
-function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","function test() {  ");  
-  sjsp___end(sjsp___state); return someHeavyExpression;
+function test() { var sjsp__state = sjsp__start("test.js",1,17,"test","function test() {  ");  
+  sjsp__end(sjsp__state); return someHeavyExpression;
 }
 ```
 The function will surely be called but the profiling result is not correct.
 Now, let's see how `sjsp` handles `return` statements.
 ```js
-function test() { var sjsp___state = sjsp___start("test.js",1,17,"test","function test() {  ");  
-  return (function(){ var sjsp___return = someHeavyExpression; sjsp___end(sjsp___state); return sjsp___return; } ).call(this);; sjsp___end(sjsp___state);
+function test() { var sjsp__state = sjsp__start("test.js",1,17,"test","function test() {  ");  
+  return (function(){ var sjsp__return = someHeavyExpression; sjsp__end(sjsp__state); return sjsp__return; } ).call(this);; sjsp__end(sjsp__state);
 }
 ```
 It creates an anonymous function, captures the result and calls the function instantly.
