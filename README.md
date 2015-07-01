@@ -30,9 +30,9 @@ So, here comes `sjsp`, a tool for injecting profiling codes into JavaScript file
 
 ## Installation
 
-There are two ways to build sjsp; cabal-install and stack. If you have not Haskell environment yet, stack is a simpler way.
+There are two ways to build `sjsp`; cabal and stack. If you do not have Haskell environment yet, stack is a simpler way.
 
-### cabal-install
+### cabal
 
 ```
  $ git clone https://github.com/itchyny/sjsp
