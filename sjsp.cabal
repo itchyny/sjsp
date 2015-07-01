@@ -16,8 +16,6 @@ executable sjsp
                       , Helper
   build-depends:        base >= 4.0
                       , ghc-prim
-                      , happy
-                      , alex
                       , language-javascript
                       , bytestring >= 0.10.6
                       , filepath
