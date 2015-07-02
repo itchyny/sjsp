@@ -107,7 +107,7 @@ profiler config node = NN $ JSExpression [ fromRight $ flip parse "" $
          , identifier "result_time" ++ " = []; "
          , identifier "result_count" ++ " = []; "
          , identifier "format" ++ " = function(x) { return"
-         , " 'time: ' + " ++ identifier "print" ++ "((x.time / 100).toFixed(2), 7) + 'sec  "
+         , " 'time: ' + " ++ identifier "print" ++ "((x.time / 1000).toFixed(2), 7) + 'sec  "
          , " count: ' + " ++ identifier "print" ++ "(x.count, 7) + ' '"
          , " + " ++ identifier "print" ++ "(x.fname, 15) + '  '"
          , " + " ++ identifier "print" ++ "(x.name, 13) + '  '"
