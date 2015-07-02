@@ -92,7 +92,7 @@ identifier name = "sjsp__" ++ name
 profiler :: Config -> JSNode -> JSNode
 profiler config node = NN $ JSExpression [ fromRight $ flip parse "" $
   concat [ "window." ++ identifier "result" ++ " = window." ++ identifier "result" ++ " || {}; "
-         , identifier "state" ++ " = { time: 0, line: 0, col: 0, name: '' };"
+         , identifier "state" ++ " = { time: 0, line: 0, col: 0, name: '', fname: '', linestr: '' };"
          , identifier "start" ++ " = function(fname, line, col, name, linestr) {"
          , "  return { time: Date.now(), line: line, col: col, name: name, fname: fname, linestr: linestr };"
          , "};"
