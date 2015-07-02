@@ -99,7 +99,7 @@ profiler config node = NN $ JSExpression [ fromRight $ flip parse "" $
          , identifier "end" ++ " = function(x) {"
          , "  if (!x.time) return;"
          , "  var key = x.fname + ' :: ' + x.line + ' :: ' + x.col; "
-         , "  " ++ identifier "result" ++ "[key] = " ++ identifier "result" ++ "[key] || { count: 1, time: 0, line: x.line, col: x.col, name: x.name, fname: x.fname, linestr: x.linestr }; "
+         , "  " ++ identifier "result" ++ "[key] = " ++ identifier "result" ++ "[key] || { count: 0, time: 0, line: x.line, col: x.col, name: x.name, fname: x.fname, linestr: x.linestr }; "
          , "  " ++ identifier "result" ++ "[key].time += (Date.now() - x.time); "
          , "  " ++ identifier "result" ++ "[key].count += 1; "
          , "}; "
