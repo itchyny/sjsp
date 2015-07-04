@@ -14,11 +14,11 @@ f :: String -> [String] -> Node -> Node
 -- function test() { body; } -> function test() { start("test"); body; end(); }
 f fname contents (JSFunction fn name lb args rb (NN (JSBlock a b c)))
   = JSFunction fn name lb args rb
-      $ NN (JSBlock a (start fname contents (getPos a) (extractName [name]) : b ++ [ jssemicolon, end ]) c)
+      $ NN (JSBlock a (start fname contents (getPos fn) (extractName [name]) : b ++ [ jssemicolon, end ]) c)
 -- function() { body; }; -> function() { start("anonymous"); body; end(); };
 f fname contents (JSFunctionExpression fn name lb args rb (NN (JSBlock a b c)))
   = JSFunctionExpression fn name lb args rb
-      $ NN (JSBlock a (start fname contents (getPos a) (extractName name) : b ++ [ jssemicolon, end ]) c)
+      $ NN (JSBlock a (start fname contents (getPos fn) (extractName name) : b ++ [ jssemicolon, end ]) c)
 -- var test = function() { start("anonymous"); body; end(); }; -> function() { start("test"); body; end(); };
 f fname contents
   (JSVarDecl
@@ -31,7 +31,7 @@ f fname contents
         variable
         [ equal,
           NN (JSFunctionExpression fn name lb args rb
-               $ NN (JSBlock a (start fname contents (getPos a) (extractName [variable])
+               $ NN (JSBlock a (start fname contents (getPos fn) (extractName [variable])
                                : b ++ [ jssemicolon ]) c)) ]
 -- var test = function() { body; }; -> function() { start("test"); body; end(); };
 f fname contents
@@ -44,7 +44,7 @@ f fname contents
       variable
       [ equal,
         NN (JSFunctionExpression fn name lb args rb
-           $ NN (JSBlock a (start fname contents (getPos a) (extractName [variable])
+           $ NN (JSBlock a (start fname contents (getPos fn) (extractName [variable])
                            : b ++ [ jssemicolon, end ]) c)) ]
 -- throw expr; -> throw (function(arguments) { start(); var value = expr; end(); return value; }).call(this, arguments);
 f _ _ (JSThrow throw expr)
@@ -207,8 +207,8 @@ jsliteral name = NT (JSLiteral name) pos []
 jsspace :: [CommentAnnotation]
 jsspace = [WhiteSpace pos " "]
 
-getPos :: [JSNode] -> TokenPosn
-getPos [NT _ p _] = p
+getPos :: JSNode -> TokenPosn
+getPos (NT _ p _) = p
 getPos _ = pos
 
 pos :: TokenPosn
