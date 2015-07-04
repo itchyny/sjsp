@@ -19,31 +19,6 @@ f fname contents (JSFunction fn name lb args rb (NN (JSBlock a b c)))
 f fname contents (JSFunctionExpression fn name lb args rb (NN (JSBlock a b c)))
   = JSFunctionExpression fn name lb args rb
       $ NN (JSBlock a (start fname contents (getPos a) (extractName name) : b ++ [ jssemicolon, end ]) c)
--- no case
-f fname contents
-  (JSVarDecl
-     variable
-     [ equal@(NT (JSLiteral "=") _ _),
-       NN (JSFunction fn name lb args rb (NN (JSBlock a (NN (JSVariables _ (NN (JSVarDecl name' _):_) _):b) c))) ])
-  | extractName [name'] == identifier "state"
-    = JSVarDecl
-        variable
-        [ equal,
-          NN (JSFunction fn name lb args rb
-             $ NN (JSBlock a (start fname contents (getPos a) (extractName [variable])
-                             : b ++ [ jssemicolon ]) c)) ]
--- no case
-f fname contents
-  (JSVarDecl
-     variable
-     [ equal@(NT (JSLiteral "=") _ _),
-       NN (JSFunction fn name lb args rb (NN (JSBlock a b c))) ])
-  = JSVarDecl
-      variable
-      [ equal,
-        NN (JSFunction fn name lb args rb
-           $ NN (JSBlock a (start fname contents (getPos a) (extractName [variable])
-                           : b ++ [ jssemicolon, end ]) c)) ]
 -- var test = function() { start("anonymous"); body; end(); }; -> function() { start("test"); body; end(); };
 f fname contents
   (JSVarDecl
