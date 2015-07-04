@@ -11,7 +11,7 @@ data Config
            }
 
 isInterval :: Flag -> Bool
-isInterval (Interval x) = True
+isInterval (Interval _) = True
 isInterval _ = False
 
 getInterval :: Flag -> Integer
