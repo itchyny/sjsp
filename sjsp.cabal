@@ -13,9 +13,9 @@ executable sjsp
   main-is:              Main.hs
   other-modules:        Injector
                       , Config
-                      , Helper
   build-depends:        base >= 4.0
                       , ghc-prim
+                      , syb >= 0.4
                       , language-javascript
                       , bytestring >= 0.10.6
                       , filepath

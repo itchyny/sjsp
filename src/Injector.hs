@@ -1,14 +1,14 @@
 module Injector (inject) where
 
 import Data.Char (isSpace)
+import Data.Generics (everywhere, mkT)
 import Data.List (intersperse)
 import Language.JavaScript.Parser
 
-import Helper
 import Config
 
 inject :: Config -> String -> [String] -> JSNode -> JSNode
-inject config fname contents = profiler config . apply (f fname contents)
+inject config fname contents = profiler config . everywhere (mkT $ f fname contents)
 
 f :: String -> [String] -> Node -> Node
 -- function test() { body; } -> function test() { start("test"); body; end(); }
