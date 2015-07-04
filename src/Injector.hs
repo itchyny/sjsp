@@ -6,9 +6,11 @@ import Data.List (intersperse)
 import Language.JavaScript.Parser
 
 import Config
+import Profiler
 
 inject :: Config -> String -> [String] -> JSNode -> JSNode
-inject config fname contents = profiler config . everywhere (mkT $ f fname contents)
+inject config fname contents = prepend (profiler config)
+                             . everywhere (mkT $ f fname contents)
 
 f :: String -> [String] -> Node -> Node
 -- function test() { body; } -> function test() { start("test"); body; end(); }
@@ -75,46 +77,8 @@ f _ _ x = x
 identifier :: String -> String
 identifier name = "sjsp__" ++ name
 
-profiler :: Config -> JSNode -> JSNode
-profiler config node = NN $ JSExpression [ fromRight $ flip parse "" $
-  concat [ "window." ++ identifier "result" ++ " = window." ++ identifier "result" ++ " || {}; "
-         , identifier "state" ++ " = { time: 0, line: 0, col: 0, name: '', fname: '', linestr: '' };"
-         , identifier "start" ++ " = function(fname, line, col, name, linestr) {"
-         , "  return { time: Date.now(), line: line, col: col, name: name, fname: fname, linestr: linestr };"
-         , "};"
-         , identifier "end" ++ " = function(x) {"
-         , "  if (!x.time) return;"
-         , "  var key = x.fname + ' :: ' + x.line + ' :: ' + x.col; "
-         , "  " ++ identifier "result" ++ "[key] = " ++ identifier "result" ++ "[key] || { count: 0, time: 0, line: x.line, col: x.col, name: x.name, fname: x.fname, linestr: x.linestr }; "
-         , "  " ++ identifier "result" ++ "[key].time += (Date.now() - x.time); "
-         , "  " ++ identifier "result" ++ "[key].count += 1; "
-         , "}; "
-         , identifier "print" ++ " = function(x, n) { return Array(Math.max(0, n - x.toString().length + 1)).join(' ') + x; }; "
-         , identifier "result_time" ++ " = []; "
-         , identifier "result_count" ++ " = []; "
-         , identifier "format" ++ " = function(x) { return"
-         , " 'time: ' + " ++ identifier "print" ++ "((x.time / 1000).toFixed(2), 7) + 'sec  "
-         , " count: ' + " ++ identifier "print" ++ "(x.count, 7) + ' '"
-         , " + " ++ identifier "print" ++ "(x.fname, 15) + '  '"
-         , " + " ++ identifier "print" ++ "(x.name, 13) + '  '"
-         , " + ' (line:' + " ++ identifier "print" ++ "(x.line, 4) + ', col:' + " ++ identifier "print" ++ "(x.col, 3) + ')   ' + x.linestr; }; "
-         , "if (window.hasOwnProperty('" ++ identifier "interval" ++ "')) { "
-         , "  clearInterval(window." ++ identifier "interval" ++ ");"
-         , "}"
-         , "window." ++ identifier "interval" ++ " = setInterval(function() { "
-         , "  console.log('========== SORT BY TIME ==========\\n' + "
-         , " (" ++ identifier "result_time" ++ " = Object.keys(" ++ identifier "result" ++ ")"
-         , ".map(function(key) { return " ++ identifier "result" ++ "[key]; })"
-         , ".sort(function(x, y) { return y.time - x.time; })"
-         , ".slice(0, 20)"
-         , ".map(function(x){ return " ++ identifier "format" ++ "(x); })).join('\\n') + "
-         , "  '\\n========== SORT BY COUNT ==========\\n' + "
-         , " (" ++ identifier "result_count" ++ " = Object.keys(" ++ identifier "result" ++ ")"
-         , ".map(function(key) { return " ++ identifier "result" ++ "[key]; })"
-         , ".sort(function(x, y) { return y.count - x.count; })"
-         , ".slice(0, 20)"
-         , ".map(function(x){ return " ++ identifier "format" ++ "(x); })).join('\\n')); "
-         , "}, " ++ show (interval config) ++ " * 1000);" ], node ]
+prepend :: String -> JSNode -> JSNode
+prepend code node = NN $ JSExpression [ fromRight $ parse code "", node ]
 
 start :: String -> [String] -> TokenPosn -> String -> JSNode
 start fname contents (TokenPn _ line col) name

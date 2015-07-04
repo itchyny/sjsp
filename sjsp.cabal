@@ -12,6 +12,7 @@ executable sjsp
   hs-source-dirs:       src
   main-is:              Main.hs
   other-modules:        Injector
+                      , Profiler
                       , Config
   build-depends:        base >= 4.0
                       , ghc-prim
