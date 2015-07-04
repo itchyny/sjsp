@@ -49,14 +49,14 @@ f fname contents
 -- throw expr; -> throw (function(arguments) { start(); var value = expr; end(); return value; }).call(this, arguments);
 f _ _ (JSThrow throw expr)
   = JSThrow throw
-      ( jscallNoSemicolon
+      $ jscallNoSemicolon
         (jsmemberdot "call" $
           jsparen $
             jsfunction ["arguments"]
               [ jsvar (identifier "return") [expr],
                 end,
                 jsreturn (jsexpr $ jsidentifier (identifier "return")) ])
-              [NT (JSLiteral "this") pos [], NT (JSLiteral "arguments") pos []] )
+              [jsliteral "this", jsliteral "arguments"]
 -- return expr; -> return (function(arguments) { start(); var value = expr; end(); return value; }).call(this, arguments);
 f _ _ (JSReturn ret expr _)
   = JSReturn ret
@@ -69,7 +69,7 @@ f _ _ (JSReturn ret expr _)
                  else [ jsvar (identifier "return") expr,
                         end,
                         jsreturn (jsexpr $ jsidentifier (identifier "return")) ])
-                      [NT (JSLiteral "this") pos [], NT (JSLiteral "arguments") pos []] ] jssemicolon
+                      [jsliteral "this", jsliteral "arguments"] ] jssemicolon
 f _ _ x = x
 
 identifier :: String -> String
@@ -129,7 +129,7 @@ end :: JSNode
 end
   = NN $ JSExpression
            [ jsidentifier (identifier "end"),
-             NN $ JSArguments (NT (JSLiteral "(") pos []) [jsidentifierNoSpace (identifier "state")] (NT (JSLiteral ")") pos []),
+             NN $ JSArguments (jsliteral "(") [jsidentifierNoSpace (identifier "state")] (jsliteral ")"),
              jssemicolon ]
 
 extractName :: [JSNode] -> String
@@ -146,15 +146,15 @@ jsstring xs = NT (JSStringLiteral '"' (tail $ init $ show xs)) pos []
 jsfunction :: [String] -> [JSNode] -> JSNode
 jsfunction xs node
   = NN $ JSFunctionExpression
-           (NT (JSLiteral "function") pos [])
+           (jsliteral "function")
            []
-           (NT (JSLiteral "(") pos [])
+           (jsliteral "(")
            (jscommas [NT (JSIdentifier x) pos [] | x <- xs ])
-           (NT (JSLiteral ")") pos [])
-           (NN $ JSBlock [NT (JSLiteral "{") pos []] node [NT (JSLiteral "}") pos jsspace])
+           (jsliteral ")")
+           (NN $ JSBlock [jsliteral "{"] node [NT (JSLiteral "}") pos jsspace])
 
 jscommas :: [JSNode] -> [JSNode]
-jscommas = intersperse $ NT (JSLiteral ",") pos []
+jscommas = intersperse $ jsliteral ","
 
 jsvar :: String -> [JSNode] -> JSNode
 jsvar name expr
@@ -183,15 +183,10 @@ jsparen expr
            expr
            (NT (JSLiteral ")") pos jsspace)
 
--- jscall :: JSNode -> [JSNode] -> JSNode
--- jscall expr args
---   = NN $ JSExpression
---          [ expr, NN (JSArguments (NT (JSLiteral "(") pos []) args (NT (JSLiteral ")") pos [])), jssemicolon ]
-
 jscallNoSemicolon :: JSNode -> [JSNode] -> JSNode
 jscallNoSemicolon expr args
   = NN $ JSExpression
-         [ expr, NN (JSArguments (NT (JSLiteral "(") pos []) (jscommas args) (NT (JSLiteral ")") pos [])) ]
+         [ expr, NN (JSArguments (jsliteral "(") (jscommas args) (jsliteral ")")) ]
 
 jsreturn :: JSNode -> JSNode
 jsreturn expr
@@ -200,11 +195,14 @@ jsreturn expr
 jsmemberdot :: String -> JSNode -> JSNode
 jsmemberdot name expr
   = NN $ JSMemberDot [expr]
-         (NT (JSLiteral ".") pos [])
+         (jsliteral ".")
          (NT (JSIdentifier name) pos [])
 
 jssemicolon :: JSNode
-jssemicolon = NT (JSLiteral ";") pos []
+jssemicolon = jsliteral ";"
+
+jsliteral :: String -> JSNode
+jsliteral name = NT (JSLiteral name) pos []
 
 jsspace :: [CommentAnnotation]
 jsspace = [WhiteSpace pos " "]
