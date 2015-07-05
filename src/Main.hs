@@ -33,12 +33,15 @@ process opt name
   where output | Print `elem` opt = BS.putStrLn
                | otherwise = BS.writeFile (replaceExtension name ".sjsp.js")
         config = Config { interval = maybe 10 getInterval $ listToMaybe $ filter isInterval opt
+                        , top = maybe 10 getTop $ listToMaybe $ filter isTop opt
                         }
 
 options :: [OptDescr Flag]
 options =
   [ Option "i"  ["interval"] (OptArg (Interval . fromMaybe "10") "INTERVAL")
                                              "interval time of logging the result in seconds (default 10)"
+  , Option "t"  ["top"]      (OptArg (Top . fromMaybe "20") "TOP")
+                                             "number of the results in the ranking (default 20)"
   , Option "p"  ["print"]    (NoArg Print)   "print out the compiled result to stdout"
   , Option "vV" ["version"]  (NoArg Version) "display the version number"
   , Option "h?" ["help"]     (NoArg Help)    "display this help"
