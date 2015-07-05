@@ -44,7 +44,7 @@ profiler config = concatMap (dropWhile isSpace)
  , "  }; "
  , "  var lengths = function(result) { "
  , "    return { "
- , "      time:  max(result.map(function(x) { return (x.time / 1000).toFixed(2).length; })), "
+ , "      time:  max(result.map(function(x) { return (x.time / 1000).toFixed(3).length; })), "
  , "      count: max(result.map(function(x) { return x.count.toString().length; })), "
  , "      fname: max(result.map(function(x) { return x.fname.length; })), "
  , "      name:  max(result.map(function(x) { return x.name.length; })), "
