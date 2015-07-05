@@ -1,7 +1,7 @@
 module Config where
 
 data Flag = Interval String
-          | Top String
+          | Number String
           | Accurate
           | Print
           | Version
@@ -10,7 +10,7 @@ data Flag = Interval String
 
 data Config
   = Config { interval :: Integer
-           , top :: Integer
+           , number :: Integer
            , accurate :: Bool
            }
 
@@ -22,10 +22,10 @@ getInterval :: Flag -> Integer
 getInterval (Interval x) = read x
 getInterval _ = undefined
 
-isTop :: Flag -> Bool
-isTop (Top _) = True
-isTop _ = False
+isNumber :: Flag -> Bool
+isNumber (Number _) = True
+isNumber _ = False
 
-getTop :: Flag -> Integer
-getTop (Top x) = read x
-getTop _ = undefined
+getNumber :: Flag -> Integer
+getNumber (Number x) = read x
+getNumber _ = undefined

@@ -33,7 +33,7 @@ process opt name
   where output | Print `elem` opt = BS.putStrLn
                | otherwise = BS.writeFile (replaceExtension name ".sjsp.js")
         config = Config { interval = get 10 getInterval isInterval opt
-                        , top = get 20 getTop isTop opt
+                        , number = get 20 getNumber isNumber opt
                         , accurate = Accurate `elem` opt
                         }
         get :: a -> (Flag -> a) -> (Flag -> Bool) -> [Flag] -> a
@@ -43,7 +43,7 @@ options :: [OptDescr Flag]
 options =
   [ Option "i"  ["interval"] (OptArg (Interval . fromMaybe "10") "INTERVAL")
                                              "interval time of logging the result in seconds (default 10)"
-  , Option "t"  ["top"]      (OptArg (Top . fromMaybe "20") "TOP")
+  , Option "n"  ["number"]   (OptArg (Number . fromMaybe "20") "NUMBER")
                                              "number of the results in the ranking (default 20)"
   , Option "a"  ["accurate"] (NoArg Accurate) "measure the time in accurate precision using performance.now() (default false)"
   , Option "p"  ["print"]    (NoArg Print)   "print out the compiled result to stdout"

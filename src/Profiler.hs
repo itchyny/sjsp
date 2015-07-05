@@ -8,7 +8,7 @@ profiler :: Config -> String
 profiler config = concatMap (dropWhile isSpace)
  [ ";(function(global) { "
  , "  var interval = " ++ show (interval config) ++ "; "
- , "  var top = " ++ show (top config) ++ "; "
+ , "  var number = " ++ show (number config) ++ "; "
  , "  var accurate = " ++ map toLower (show (accurate config)) ++ "; "
  , "  global.sjsp__result = global.sjsp__result || {}; "
  , "  var sjsp__state = global.sjsp__state = { time: 0, count: 0, line: 0, col: 0, name: '', fname: '', linestr: '' }; "
@@ -59,7 +59,7 @@ profiler config = concatMap (dropWhile isSpace)
  , "      Object.keys(global.sjsp__result)"
  , "            .map(function(key) { return global.sjsp__result[key]; })"
  , "            .sort(sorter)"
- , "            .slice(0, top); "
+ , "            .slice(0, number); "
  , "    var l = lengths(result); "
  , "    return result.map(function(x) { return format(x, l); }); "
  , "  }; "
