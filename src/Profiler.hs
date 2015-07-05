@@ -33,7 +33,7 @@ profiler config = concatMap (dropWhile isSpace)
  , "    return Array(Math.max(0, n - x.toString().length + 1)).join(' ') + x; "
  , "  }; "
  , "  var format = function(x, y) { "
- , "    return [ 'time: ' + space((x.time / 1000).toFixed(2), y.time) + 'sec' "
+ , "    return [ 'time: ' + space((x.time / 1000).toFixed(3), y.time) + 'sec' "
  , "           , 'count: ' + space(x.count, y.count)"
  , "           , space(x.name, y.name)"
  , "           , space(x.fname, y.fname)"

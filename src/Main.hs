@@ -32,9 +32,11 @@ process opt name
   =<< inject config (takeFileName name) <$> (lines <$> readFile name) <*> parseFile name
   where output | Print `elem` opt = BS.putStrLn
                | otherwise = BS.writeFile (replaceExtension name ".sjsp.js")
-        config = Config { interval = maybe 10 getInterval $ listToMaybe $ filter isInterval opt
-                        , top = maybe 20 getTop $ listToMaybe $ filter isTop opt
+        config = Config { interval = get 10 getInterval isInterval opt
+                        , top = get 20 getTop isTop opt
                         }
+        get :: a -> (Flag -> a) -> (Flag -> Bool) -> [Flag] -> a
+        get x f g = maybe x f . listToMaybe . reverse . filter g
 
 options :: [OptDescr Flag]
 options =
