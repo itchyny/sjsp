@@ -1,18 +1,18 @@
 module Main where
 
 import Control.Applicative ((<$>), (<*>))
+import Data.Maybe (fromMaybe, listToMaybe)
 import Data.Version (showVersion)
 import Language.JavaScript.Parser
 import System.Console.GetOpt
 import System.Environment (getArgs)
 import System.FilePath.Posix (replaceExtension, takeFileName)
 import qualified Data.ByteString.Builder as BS
-import qualified Data.ByteString.Lazy as BS
+import qualified Data.ByteString.Lazy.Char8 as BS
 
-import Injector (inject)
 import Config
+import Injector (inject)
 import Paths_sjsp (version)
-import Data.Maybe (fromMaybe, listToMaybe)
 
 main :: IO ()
 main = command <$> getOpt Permute options =<< getArgs
