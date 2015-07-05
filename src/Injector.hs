@@ -48,7 +48,7 @@ f fname contents
         NN (JSFunctionExpression fn name lb args rb
            $ NN (JSBlock a (start fname contents (getPos fn) (extractName [variable])
                            : b ++ [ jssemicolon, end ]) c)) ]
--- throw expr; -> throw (function(arguments) { start(); var value = expr; end(); return value; }).call(this, arguments);
+-- throw expr; -> throw (function(arguments) { var value = expr; end(); return value; }).call(this, arguments);
 f _ _ (JSThrow throw expr)
   = JSThrow throw
       $ jscallNoSemicolon
@@ -59,7 +59,7 @@ f _ _ (JSThrow throw expr)
                 end,
                 jsreturn (jsexpr $ jsidentifier (identifier "return")) ])
               [jsliteral "this", jsliteral "arguments"]
--- return expr; -> return (function(arguments) { start(); var value = expr; end(); return value; }).call(this, arguments);
+-- return expr; -> return (function(arguments) { var value = expr; end(); return value; }).call(this, arguments);
 f _ _ (JSReturn ret expr _)
   = JSReturn ret
       [ jscallNoSemicolon
