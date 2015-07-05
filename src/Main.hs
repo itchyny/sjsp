@@ -45,7 +45,7 @@ options :: [OptDescr Flag]
 options =
   [ Option "i"  ["interval"] (OptArg (Interval . fromMaybe "10") "INTERVAL") "interval time of logging the result in seconds (default 10)"
   , Option "n"  ["number"]   (OptArg (Number . fromMaybe "20") "NUMBER") "number of the results in the ranking (default 20)"
-  , Option "a"  ["accurate"] (NoArg Accurate) "measure the time in accurate precision using performance.now() (default false)"
+  , Option "a"  ["accurate"] (NoArg Accurate) "measure the time in accurate precision using performance.now() (default off)"
   , Option "t"  ["time"]     (NoArg Time)     "reports the result sorted by consumed time (default on; use only -c/--count to disable this flag)"
   , Option "c"  ["count"]    (NoArg Count)    "reports the result sorted by the number of times the function is called (default on; use only -t/--time to disable this flag)"
   , Option "p"  ["print"]    (NoArg Print)    "print out the compiled result to stdout"
