@@ -10,7 +10,6 @@ cabal-version:          >=1.6
 synopsis:               Simple JavaScript Profiler
 description:            This is a JavaScript profiler, injecting profiling
                         codes into your JavaScript files.
-                        See https://github.com/itchyny/sjsp for details.
 
 executable sjsp
   hs-source-dirs:       src
@@ -30,4 +29,4 @@ executable sjsp
 
 source-repository head
   type:                 git
-  location:             git@github.com:itchyny/sjsp.git
+  location:             https://github.com/itchyny/sjsp
