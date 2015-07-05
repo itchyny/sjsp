@@ -58,7 +58,7 @@ f _ _ (JSThrow throw expr)
               [ jsvar (identifier "return") [expr],
                 end,
                 jsreturn (jsexpr $ jsidentifier (identifier "return")) ])
-              [jsliteral "this", jsliteral "arguments"]
+              [jsliteral "this", jsliteralSpace "arguments"]
 -- return; -> return (function() { end(); })();
 f _ _ (JSReturn ret [] _)
   = JSReturn ret
