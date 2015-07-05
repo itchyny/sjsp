@@ -6,7 +6,11 @@ license:                MIT
 license-file:           LICENSE
 category:               Compiler
 build-type:             Simple
-cabal-version:          >=1.2
+cabal-version:          >=1.6
+synopsis:               Simple JavaScript Profiler
+description:            This is a JavaScript profiler, injecting profiling
+                        codes into your JavaScript files.
+                        See https://github.com/itchyny/sjsp for details.
 
 executable sjsp
   hs-source-dirs:       src
@@ -14,7 +18,7 @@ executable sjsp
   other-modules:        Injector
                       , Profiler
                       , Config
-  build-depends:        base >= 4.0
+  build-depends:        base >= 4.0 && < 5
                       , ghc-prim
                       , syb >= 0.4
                       , language-javascript
@@ -23,3 +27,7 @@ executable sjsp
                       , blaze-builder >= 0.3.3
                       , unordered-containers
   build-tools:          happy >= 1.19, alex >= 3.1
+
+source-repository head
+  type:                 git
+  location:             git@github.com:itchyny/sjsp.git
