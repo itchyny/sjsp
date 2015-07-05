@@ -1,6 +1,6 @@
 module Profiler (profiler) where
 
-import Data.Char (isSpace)
+import Data.Char (isSpace, toLower)
 
 import Config
 
@@ -9,10 +9,12 @@ profiler config = concatMap (dropWhile isSpace)
  [ ";(function(global) { "
  , "  var interval = " ++ show (interval config) ++ "; "
  , "  var top = " ++ show (top config) ++ "; "
+ , "  var accurate = " ++ map toLower (show (accurate config)) ++ "; "
  , "  global.sjsp__result = global.sjsp__result || {}; "
  , "  var sjsp__state = global.sjsp__state = { time: 0, count: 0, line: 0, col: 0, name: '', fname: '', linestr: '' }; "
+ , "  var now = accurate ? function() { return performance.now(); } : function() { return Date.now(); }; "
  , "  global.sjsp__start = function(fname, line, col, name, linestr) { "
- , "    return { time: Date.now(), line: line, col: col, name: name, fname: fname, linestr: linestr }; "
+ , "    return { time: now(), line: line, col: col, name: name, fname: fname, linestr: linestr }; "
  , "  }; "
  , "  global.sjsp__end = function(x) { "
  , "    if (!x.time) { "
@@ -21,7 +23,7 @@ profiler config = concatMap (dropWhile isSpace)
  , "    var key = [ x.fname, x.line, x.col, x.name ].join('/'); "
  , "    global.sjsp__result[key] = global.sjsp__result[key] "
  , "      || { time: 0, count: 0, line: x.line, col: x.col, name: x.name, fname: x.fname, linestr: x.linestr }; "
- , "    global.sjsp__result[key].time += (Date.now() - x.time); "
+ , "    global.sjsp__result[key].time += (now() - x.time); "
  , "    global.sjsp__result[key].count += 1; "
  , "  }; "
  , "  global.sjsp__result_time = global.sjsp__result_time || []; "
@@ -33,7 +35,7 @@ profiler config = concatMap (dropWhile isSpace)
  , "    return Array(Math.max(0, n - x.toString().length + 1)).join(' ') + x; "
  , "  }; "
  , "  var format = function(x, y) { "
- , "    return [ 'time: ' + space((x.time / 1000).toFixed(3), y.time) + 'sec' "
+ , "    return [ 'time: ' + space((x.time / (accurate ? 1 : 1000)).toFixed(3), y.time) + (accurate ? 'm' : '') + 'sec' "
  , "           , 'count: ' + space(x.count, y.count)"
  , "           , space(x.name, y.name)"
  , "           , space(x.fname, y.fname)"
@@ -44,7 +46,7 @@ profiler config = concatMap (dropWhile isSpace)
  , "  }; "
  , "  var lengths = function(result) { "
  , "    return { "
- , "      time:  max(result.map(function(x) { return (x.time / 1000).toFixed(3).length; })), "
+ , "      time:  max(result.map(function(x) { return (x.time / (accurate ? 1 : 1000)).toFixed(3).length; })), "
  , "      count: max(result.map(function(x) { return x.count.toString().length; })), "
  , "      fname: max(result.map(function(x) { return x.fname.length; })), "
  , "      name:  max(result.map(function(x) { return x.name.length; })), "

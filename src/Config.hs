@@ -2,6 +2,7 @@ module Config where
 
 data Flag = Interval String
           | Top String
+          | Accurate
           | Print
           | Version
           | Help
@@ -10,6 +11,7 @@ data Flag = Interval String
 data Config
   = Config { interval :: Integer
            , top :: Integer
+           , accurate :: Bool
            }
 
 isInterval :: Flag -> Bool
