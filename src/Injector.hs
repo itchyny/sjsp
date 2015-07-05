@@ -59,19 +59,23 @@ f _ _ (JSThrow throw expr)
                 end,
                 jsreturn (jsexpr $ jsidentifier (identifier "return")) ])
               [jsliteral "this", jsliteral "arguments"]
+-- return; -> return (function() { end(); })();
+f _ _ (JSReturn ret [] _)
+  = JSReturn ret
+      [ jscallNoSemicolon
+        (jsparen $
+            jsfunction [] [ end ]) [] ] jssemicolon
 -- return expr; -> return (function(arguments) { var value = expr; end(); return value; }).call(this, arguments);
 f _ _ (JSReturn ret expr _)
   = JSReturn ret
       [ jscallNoSemicolon
         (jsmemberdot "call" $
           jsparen $
-            jsfunction ["arguments"] $
-              if null expr
-                 then [ end ]
-                 else [ jsvar (identifier "return") expr,
-                        end,
-                        jsreturn (jsexpr $ jsidentifier (identifier "return")) ])
-                      [jsliteral "this", jsliteral "arguments"] ] jssemicolon
+            jsfunction ["arguments"]
+              [ jsvar (identifier "return") expr,
+                end,
+                jsreturn (jsexpr $ jsidentifier (identifier "return")) ])
+              [jsliteral "this", jsliteral "arguments"] ] jssemicolon
 f _ _ x = x
 
 identifier :: String -> String
