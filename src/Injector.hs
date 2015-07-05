@@ -91,7 +91,7 @@ start fname contents (TokenPn _ line col) name
                                    jsnumber line,
                                    jsnumber col,
                                    jsstring name,
-                                   jsstring (dropWhile isSpace $ contents !! (line - 1))] ]
+                                   jsstring (take 200 $ dropWhile isSpace $ drop (col - 120) $ contents !! (line - 1))] ]
 
 end :: JSNode
 end
