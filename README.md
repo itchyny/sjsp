@@ -72,25 +72,25 @@ export PATH=$PATH:$HOME/.local/bin
 The profiling result will look like the following.
 ```
 ========== SORT BY TIME ==========
-time: 30.20sec   count:  71      test6  test.js  (line: 31, col: 18)  function test6() {
-time: 16.47sec   count:  41      test7  test.js  (line: 37, col: 18)  function test7() {
-time: 15.49sec   count: 133      test4  test.js  (line: 19, col: 18)  function test4() {
-time:  5.98sec   count: 216      test1  test.js  (line:  1, col: 18)  function test1() {
-time:  4.37sec   count:  18      test5  test.js  (line: 25, col: 18)  function test5() {
-time:  3.24sec   count: 512      test3  test.js  (line: 13, col: 18)  function test3() {
-time:  0.87sec   count:  67  anonymous  test.js  (line: 49, col: 24)  setInterval(function() {
-time:  0.80sec   count:   2      test2  test.js  (line:  7, col: 18)  function test2() {
-time:  0.44sec   count:   2  anonymous  test.js  (line: 43, col: 23)  setTimeout(function() {
+time: 30.202sec   count:  71      test6  test.js  (line: 31, col: 18)  function test6() {
+time: 16.474sec   count:  41      test7  test.js  (line: 37, col: 18)  function test7() {
+time: 15.490sec   count: 133      test4  test.js  (line: 19, col: 18)  function test4() {
+time:  5.981sec   count: 216      test1  test.js  (line:  1, col: 18)  function test1() {
+time:  4.375sec   count:  18      test5  test.js  (line: 25, col: 18)  function test5() {
+time:  3.241sec   count: 512      test3  test.js  (line: 13, col: 18)  function test3() {
+time:  0.874sec   count:  67  anonymous  test.js  (line: 49, col: 24)  setInterval(function() {
+time:  0.808sec   count:   2      test2  test.js  (line:  7, col: 18)  function test2() {
+time:  0.445sec   count:   2  anonymous  test.js  (line: 43, col: 23)  setTimeout(function() {
 ========== SORT BY COUNT ==========
-time:  3.24sec   count: 512      test3  test.js  (line: 13, col: 18)  function test3() {
-time:  5.98sec   count: 216      test1  test.js  (line:  1, col: 18)  function test1() {
-time: 15.49sec   count: 133      test4  test.js  (line: 19, col: 18)  function test4() {
-time: 30.20sec   count:  71      test6  test.js  (line: 31, col: 18)  function test6() {
-time:  0.87sec   count:  67  anonymous  test.js  (line: 49, col: 24)  setInterval(function() {
-time: 16.47sec   count:  41      test7  test.js  (line: 37, col: 18)  function test7() {
-time:  4.37sec   count:  18      test5  test.js  (line: 25, col: 18)  function test5() {
-time:  0.80sec   count:   2      test2  test.js  (line:  7, col: 18)  function test2() {
-time:  0.44sec   count:   2  anonymous  test.js  (line: 43, col: 23)  setTimeout(function() {
+time:  3.241sec   count: 512      test3  test.js  (line: 13, col: 18)  function test3() {
+time:  5.981sec   count: 216      test1  test.js  (line:  1, col: 18)  function test1() {
+time: 15.490sec   count: 133      test4  test.js  (line: 19, col: 18)  function test4() {
+time: 30.202sec   count:  71      test6  test.js  (line: 31, col: 18)  function test6() {
+time:  0.874sec   count:  67  anonymous  test.js  (line: 49, col: 24)  setInterval(function() {
+time: 16.474sec   count:  41      test7  test.js  (line: 37, col: 18)  function test7() {
+time:  4.375sec   count:  18      test5  test.js  (line: 25, col: 18)  function test5() {
+time:  0.808sec   count:   2      test2  test.js  (line:  7, col: 18)  function test2() {
+time:  0.445sec   count:   2  anonymous  test.js  (line: 43, col: 23)  setTimeout(function() {
 ```
 The result is easy to read and shows the functions you have to improve the performance of.
 
