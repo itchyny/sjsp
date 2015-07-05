@@ -33,7 +33,7 @@ process opt name
   where output | Print `elem` opt = BS.putStrLn
                | otherwise = BS.writeFile (replaceExtension name ".sjsp.js")
         config = Config { interval = maybe 10 getInterval $ listToMaybe $ filter isInterval opt
-                        , top = maybe 10 getTop $ listToMaybe $ filter isTop opt
+                        , top = maybe 20 getTop $ listToMaybe $ filter isTop opt
                         }
 
 options :: [OptDescr Flag]
