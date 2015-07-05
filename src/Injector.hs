@@ -75,7 +75,7 @@ f _ _ (JSReturn ret expr _)
               [ jsvar (identifier "return") expr,
                 end,
                 jsreturn (jsexpr $ jsidentifier (identifier "return")) ])
-              [jsliteral "this", jsliteral "arguments"] ] jssemicolon
+              [jsliteral "this", jsliteralSpace "arguments"] ] jssemicolon
 f _ _ x = x
 
 identifier :: String -> String
@@ -119,7 +119,7 @@ jsfunction xs node
            (jsliteral "(")
            (jscommas [NT (JSIdentifier x) pos [] | x <- xs ])
            (jsliteral ")")
-           (NN $ JSBlock [jsliteral "{"] node [NT (JSLiteral "}") pos jsspace])
+           (NN $ JSBlock [jsliteral "{"] node [jsliteralSpace "}"])
 
 jscommas :: [JSNode] -> [JSNode]
 jscommas = intersperse $ jsliteral ","
@@ -127,12 +127,12 @@ jscommas = intersperse $ jsliteral ","
 jsvar :: String -> [JSNode] -> JSNode
 jsvar name expr
   = NN $ JSVariables
-           (NT (JSLiteral "var") pos jsspace)
+           (jsliteralSpace "var")
            [NN $ JSVarDecl
                   (NT (JSIdentifier name) pos jsspace)
                   (if null expr
                       then []
-                      else [NT (JSLiteral "=") pos jsspace, NN (JSExpression expr)])]
+                      else [jsliteralSpace "=", NN (JSExpression expr)])]
            jssemicolon
 
 jsidentifier :: String -> JSNode
@@ -147,9 +147,9 @@ jsexpr = NN . JSExpression . (:[])
 jsparen :: JSNode -> JSNode
 jsparen expr
   = NN $ JSExpressionParen
-           (NT (JSLiteral "(") pos jsspace)
+           (jsliteralSpace "(")
            expr
-           (NT (JSLiteral ")") pos jsspace)
+           (jsliteral ")")
 
 jscallNoSemicolon :: JSNode -> [JSNode] -> JSNode
 jscallNoSemicolon expr args
@@ -158,7 +158,7 @@ jscallNoSemicolon expr args
 
 jsreturn :: JSNode -> JSNode
 jsreturn expr
-  = NN $ JSReturn (NT (JSLiteral "return") pos jsspace) [expr] jssemicolon
+  = NN $ JSReturn (jsliteralSpace "return") [expr] jssemicolon
 
 jsmemberdot :: String -> JSNode -> JSNode
 jsmemberdot name expr
@@ -171,6 +171,9 @@ jssemicolon = jsliteral ";"
 
 jsliteral :: String -> JSNode
 jsliteral name = NT (JSLiteral name) pos []
+
+jsliteralSpace :: String -> JSNode
+jsliteralSpace name = NT (JSLiteral name) pos jsspace
 
 jsspace :: [CommentAnnotation]
 jsspace = [WhiteSpace pos " "]
