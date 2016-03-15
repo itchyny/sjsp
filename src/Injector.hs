@@ -9,8 +9,7 @@ import Config
 import Profiler
 
 inject :: Config -> String -> [String] -> JSNode -> JSNode
-inject config fname contents = prepend (profiler config)
-                             . everywhere (mkT $ f fname contents)
+inject config fname contents = prepend (profiler config) . everywhere (mkT $ f fname contents)
 
 f :: String -> [String] -> Node -> Node
 -- function test() { body; } -> function test() { start("test"); body; end(); }
