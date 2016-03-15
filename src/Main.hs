@@ -1,14 +1,14 @@
 module Main where
 
 import Control.Applicative ((<$>), (<*>))
+import qualified Data.ByteString.Builder as BS
+import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe, listToMaybe)
 import Data.Version (showVersion)
 import Language.JavaScript.Parser
 import System.Console.GetOpt
 import System.Environment (getArgs)
 import System.FilePath.Posix (replaceExtension, takeFileName)
-import qualified Data.ByteString.Builder as BS
-import qualified Data.ByteString.Lazy.Char8 as BS
 
 import Config
 import Injector (inject)
