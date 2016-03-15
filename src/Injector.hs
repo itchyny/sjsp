@@ -49,16 +49,19 @@ f fname contents
            $ NN (JSBlock a (start fname contents (getPos fn) (extractName [variable])
                            : b ++ [ jssemicolon, end ]) c)) ]
 -- throw expr; -> throw (function(arguments) { var value = expr; end(); return value; }).call(this, arguments);
+-- throw expr1, expr2, expr3; -> throw (function(arguments) { expr1, expr2; var value = expr3; end(); throw value; }).call(this, arguments);
 f _ _ (JSThrow throw expr)
   = JSThrow throw
       $ jscallNoSemicolon
         (jsmemberdot "call" $
           jsparen $
             jsfunction ["arguments"]
-              [ jsvar (identifier "return") [expr],
+              [ NN (JSExpression pre),
+                jsvar (identifier "return") body,
                 end,
                 jsreturn (jsexpr $ jsidentifier (identifier "return")) ])
               [jsliteral "this", jsliteralSpace "arguments"]
+  where (pre, body) = splitExpressions [expr]
 -- return; -> return (function() { end(); })();
 f _ _ (JSReturn ret [] _)
   = JSReturn ret
@@ -66,17 +69,24 @@ f _ _ (JSReturn ret [] _)
         (jsparen $
             jsfunction [] [ end ]) [] ] jssemicolon
 -- return expr; -> return (function(arguments) { var value = expr; end(); return value; }).call(this, arguments);
+-- return expr1, expr2, expr3; -> return (function(arguments) { expr1, expr2; var value = expr3; end(); return value; }).call(this, arguments);
 f _ _ (JSReturn ret expr _)
   = JSReturn ret
       [ jscallNoSemicolon
         (jsmemberdot "call" $
           jsparen $
             jsfunction ["arguments"]
-              [ jsvar (identifier "return") expr,
+              [ NN (JSExpression pre),
+                jsvar (identifier "return") body,
                 end,
                 jsreturn (jsexpr $ jsidentifier (identifier "return")) ])
               [jsliteral "this", jsliteralSpace "arguments"] ] jssemicolon
+  where (pre, body) = splitExpressions expr
 f _ _ x = x
+
+splitExpressions [NN (JSExpression xs)]
+  | any isComma xs = let (ys, _:zs) = break isComma xs in (ys ++ [jssemicolon], zs)
+splitExpressions x = ([], x)
 
 identifier :: String -> String
 identifier name = "sjsp__" ++ name
@@ -184,6 +194,11 @@ getPos _ = pos
 
 pos :: TokenPosn
 pos = TokenPn 0 0 0
+
+isComma :: JSNode -> Bool
+isComma (NN (JSLiteral ",")) = True
+isComma (NT (JSLiteral ",")  _ _) = True
+isComma _ = False
 
 fromRight :: Either a b -> b
 fromRight (Right x) = x
