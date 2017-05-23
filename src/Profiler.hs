@@ -73,5 +73,5 @@ profiler config = concatMap (dropWhile isSpace)
  , "              + (count ? '========== SORT BY COUNT ==========\\n' "
  , "                      + global.sjsp__result_count.join('\\n') : '')); "
  , "  }, interval * 1000); "
- , "})(typeof window !== 'undefined' ? window : this); "
+ , "})(typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : this); "
  ]
