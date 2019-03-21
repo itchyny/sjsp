@@ -29,33 +29,16 @@ Of course not.
 So, here comes `sjsp`, a tool for injecting profiling codes into JavaScript files.
 
 ## Installation
-
-There are two ways to build `sjsp`; cabal and stack. If you do not have Haskell environment yet, stack is a simpler way.
-
-### cabal
-
-```
- $ git clone https://github.com/itchyny/sjsp
- $ cd sjsp
- $ sudo cabal install
+### Homebrew
+```shell
+brew install itchyny/tap/sjsp
 ```
 
-When you failed to install with the error `The program happy version >=x.xx is required but it could not be found.`, add the path to the environment variable.
-```
-export PATH=$PATH:$HOME/.cabal/bin
-```
-
-### stack
-
-Prepare `stack` command to download it from [here](https://github.com/commercialhaskell/stack/releases) and then run the following script:
-
-```
- $ git clone https://github.com/itchyny/sjsp
- $ cd sjsp
- $ stack install
-```
-
-```
+### Build with stack
+```shell
+git clone https://github.com/itchyny/sjsp
+cd sjsp
+stack install
 export PATH=$PATH:$HOME/.local/bin
 ```
 
