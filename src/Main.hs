@@ -65,10 +65,4 @@ help = [ info
        , usageInfo usage options
        , "Example:"
        , "  sjsp test.js     # generates test.sjsp.js"
-       , ""
-       , ""
-       , "This software is released under the MIT License."
-       , "This software is distributed at https://github.com/itchyny/sjsp."
-       , "Report a bug of this software at https://github.com/itchyny/sjsp/issues."
-       , "The author is itchyny <https://github.com/itchyny>."
        ]
