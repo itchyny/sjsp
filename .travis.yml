@@ -15,12 +15,15 @@ script:
 
 matrix:
   include:
-   - os: linux
-   - os: osx
+    - os: linux
+    - os: osx
 
 before_deploy:
-  - mv "$(which sjsp)" .
-  - zip sjsp_"$(uname | awk '{ print tolower($0) }')".zip sjsp
+  - export name="sjsp_$(uname | awk '{ print tolower($0) }')"
+  - mkdir "$name"
+  - cp README.md LICENSE "$name"
+  - mv "$(which sjsp)" "$name"
+  - zip -r "$name.zip" "$name"
 
 deploy:
   provider: releases
