@@ -1,0 +1,18 @@
+#compdef sjsp
+
+_sjsp ()
+{
+
+  _arguments -C \
+    '(-i --interval)'{-i,--interval}'=-[interval time of logging the result in seconds (default 10)]' \
+    '(-n --number)'{-n,--number}'=-[number of the results in the ranking (default 20)]' \
+    '(-a --accurate)'{-a,--accurate}'[measure the time in accurate precision using performance.now() (default off)]' \
+    '(-t --time)'{-t,--time}'[reports the result sorted by consumed time (default on; use only -c/--count to disable this flag)]' \
+    '(-c --count)'{-c,--count}'[reports the result sorted by the number of times the function is called (default on; use only -t/--time to disable this flag)]' \
+    '(-p --print)'{-p,--print}'[print out the compiled result to stdout]' \
+    '(-v -V --version)'{-v,-V,--version}'[print version number]' \
+    '(-h --help)'{-h,--help}'[print help]' \
+    '*:: :->_file' \
+    && ret=0
+
+}
