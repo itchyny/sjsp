@@ -1,0 +1,108 @@
+name: Release
+
+on:
+  push:
+    tags:
+    - 'v*'
+
+jobs:
+
+  build:
+    strategy:
+      matrix:
+        target:
+        - linux
+        - darwin
+        include:
+        - target: linux
+          os: ubuntu-latest
+        - target: darwin
+          os: macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@master
+    - name: Install stack
+      run: |
+        command -v stack || curl -sSL https://get.haskellstack.org/ | sh
+    - name: Build
+      run: stack build
+    - name: Install
+      run: stack install
+    - name: Test
+      run: stack test
+    - name: Set the asset name
+      id: asset
+      run: echo "::set-output name=name::$(basename $PWD)_${GITHUB_REF#refs/tags/}_${{ matrix.target }}_amd64"
+    - name: Build artifact
+      run: |
+        export PATH=$PATH:~/.local/bin
+        name=${{ steps.asset.outputs.name }}
+        mkdir $name
+        cp README.md LICENSE _$(basename $PWD) $name
+        mv "$(which $(basename $PWD))" $name
+        zip -r $name.zip $name
+      env:
+        TARGET: ${{ matrix.target }}
+    - name: Upload artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: ${{ matrix.target }}
+        path: ${{ steps.asset.outputs.name }}.zip
+
+  create-release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Create release
+      id: create-release
+      uses: actions/create-release@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Save release upload url
+      run: |
+        echo '${{ steps.create-release.outputs.upload_url }}' > release_upload_url.txt
+    - name: Upload release upload url
+      uses: actions/upload-artifact@master
+      with:
+        name: create-release
+        path: release_upload_url.txt
+
+  upload-release:
+    strategy:
+      matrix:
+        target:
+        - linux
+        - darwin
+    needs: [create-release]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download release upload url
+      uses: actions/download-artifact@master
+      with:
+        name: create-release
+    - name: Set upload url
+      id: upload-url
+      run: |
+        echo "::set-output name=url::$(cat create-release/release_upload_url.txt)"
+    - name: Download artifact
+      uses: actions/download-artifact@master
+      with:
+        name: ${{ matrix.target }}
+    - name: Set the asset name
+      id: asset
+      run: echo "::set-output name=name::$(basename $PWD)_${GITHUB_REF#refs/tags/}_${{ matrix.target }}_amd64"
+    - name: Upload release artifact
+      uses: actions/upload-release-asset@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.upload-url.outputs.url }}
+        asset_path: ${{ matrix.target }}/${{ steps.asset.outputs.name }}.zip
+        asset_name: ${{ steps.asset.outputs.name }}.zip
+        asset_content_type: application/zip
